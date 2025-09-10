@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleCut Pro - Plataforma de Peluquerías</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6f42c1;
+            --secondary: #d63384;
+            --accent: #20c997;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--gradient);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(50, 50, 93, 0.15), 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .brand-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="50" r="1.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .brand-logo {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-content {
+            padding: 2rem;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 50px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-pills .nav-link.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.3);
+        }
+
+        .nav-pills .nav-link:not(.active) {
+            color: var(--primary);
+            border-color: rgba(111, 66, 193, 0.2);
+        }
+
+        .form-floating > label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(111, 66, 193, 0.4);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .map-container {
+            height: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .map-container:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.1);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: var(--gradient);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step.completed {
+            background: var(--accent);
+            color: white;
+        }
+
+        .step-line {
+            width: 60px;
+            height: 2px;
+            background: #e9ecef;
+            margin: 0 10px;
+        }
+
+        .step-line.completed {
+            background: var(--accent);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .location-info {
+            background: rgba(32, 201, 151, 0.1);
+            border: 1px solid rgba(32, 201, 151, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .auth-card {
+                margin: 10px;
+            }
+            .time-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .social-login {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            font-size: 1.2rem;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-btn.google:hover { color: #db4437; border-color: #db4437; }
+        .social-btn.facebook:hover { color: #4267B2; border-color: #4267B2; }
+        .social-btn.apple:hover { color: #000; border-color: #000; }
+
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+            color: #6c757d;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e9ecef;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="main-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <div class="auth-card">
+                        <div class="brand-header">
+                            <div class="brand-logo">
+                                <i class="fas fa-cut"></i>
+                            </div>
+                            <h2>StyleCut Pro</h2>
+                            <p class="mb-0">Plataforma Integral para Peluquerías</p>
+                        </div>
+
+                        <div class="auth-content">
+                            <!-- Navigation Tabs -->
+                            <ul class="nav nav-pills nav-justified mb-4" id="authTabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="login-tab" data-bs-toggle="pill" href="#login">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="register-tab" data-bs-toggle="pill" href="#register">
+                                        <i class="fas fa-user-plus me-2"></i>Registrar Peluquería
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <!-- Login Tab -->
+                                <div class="tab-pane fade show active" id="login">
+                                    <form id="loginForm">
+                                        <div class="form-floating mb-3">
+                                            <input type="email" class="form-control" id="loginEmail" placeholder="nombre@ejemplo.com" required>
+                                            <label for="loginEmail"><i class="fas fa-envelope me-2"></i>Email</label>
+                                        </div>
+
+                                        <div class="form-floating mb-3">
+                                            <input type="password" class="form-control" id="loginPassword" placeholder="Contraseña" required>
+                                            <label for="loginPassword"><i class="fas fa-lock me-2"></i>Contraseña</label>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="remember">
+                                                <label class="form-check-label" for="remember">Recordarme</label>
+                                            </div>
+                                            <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                                        </button>
+                                    </form>
+
+                                    <div class="divider">
+                                        <span>o continúa con</span>
+                                    </div>
+
+                                    <div class="social-login">
+                                        <button class="social-btn google" onclick="loginWithGoogle()">
+                                            <i class="fab fa-google"></i>
+                                        </button>
+                                        <button class="social-btn facebook" onclick="loginWithFacebook()">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </button>
+                                        <button class="social-btn apple" onclick="loginWithApple()">
+                                            <i class="fab fa-apple"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="text-center mt-4">
+                                        <button class="btn btn-outline-primary" onclick="tryDemo()">
+                                            <i class="fas fa-play me-2"></i>Probar Demo Gratuita
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Register Tab -->
+                                <div class="tab-pane fade" id="register">
+                                    <div class="step-indicator">
+                                        <div class="step active" id="step1">1</div>
+                                        <div class="step-line" id="line1"></div>
+                                        <div class="step" id="step2">2</div>
+                                        <div class="step-line" id="line2"></div>
+                                        <div class="step" id="step3">3</div>
+                                    </div>
+
+                                    <form id="registerForm">
+                                        <!-- Step 1: Información Básica -->
+                                        <div class="step-content fade-in" id="stepContent1">
+                                            <h4 class="text-center mb-4">Información de la Peluquería</h4>
+                                            
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
+                                                <label for="nombre"><i class="fas fa-store me-2"></i>Nombre de la Peluquería</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="email" class="form-control" id="email" placeholder="Email" required>
+                                                <label for="email"><i class="fas fa-envelope me-2"></i>Email de Contacto</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="tel" class="form-control" id="telefono" placeholder="Teléfono" required>
+                                                <label for="telefono"><i class="fas fa-phone me-2"></i>Teléfono</label>
+                                            </div>
+
+                                            <div class="form-floating mb-4">
+                                                <textarea class="form-control" id="descripcion" placeholder="Descripción" style="height: 100px"></textarea>
+                                                <label for="descripcion"><i class="fas fa-align-left me-2"></i>Descripción de tu peluquería</label>
+                                            </div>
+
+                                            <button type="button" class="btn btn-primary w-100" onclick="nextStep(2)">
+                                                Continuar <i class="fas fa-arrow-right ms-2"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Step 2: Ubicación -->
+                                        <div class="step-content" id="stepContent2" style="display: none;">
+                                            <h4 class="text-center mb-4">Ubicación y Dirección</h4>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="direccion" placeholder="Dirección" required>
+                                                <label for="direccion"><i class="fas fa-map-marker-alt me-2"></i>Dirección Completa</label>
+                                            </div>
+
+                                            <div class="map-container mb-3" id="map"></div>
+                                            
+                                            <div class="location-info" id="locationInfo" style="display: none;">
+                                                <h6><i class="fas fa-map-pin me-2"></i>Información de Ubicación</h6>
+                                                <p class="mb-1"><strong>Coordenadas:</strong> <span id="coordinates"></span></p>
+                                                <p class="mb-0"><strong>Dirección:</strong> <span id="fullAddress"></span></p>
+                                            </div>
+
+                                            <div class="d-flex gap-2 mt-4">
+                                                <button type="button" class="btn btn-outline-primary flex-fill" onclick="prevStep(1)">
+                                                    <i class="fas fa-arrow-left me-2"></i>Anterior
+                                                </button>
+                                                <button type="button" class="btn btn-primary flex-fill" onclick="nextStep(3)">
+                                                    Continuar <i class="fas fa-arrow-right ms-2"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Step 3: Horarios y Configuración -->
+                                        <div class="step-content" id="stepContent3" style="display: none;">
+                                            <h4 class="text-center mb-4">Horarios y Configuración</h4>
+
+                                            <div class="time-grid">
+                                                <div class="form-floating">
+                                                    <input type="time" class="form-control" id="horario_apertura" required>
+                                                    <label for="horario_apertura"><i class="fas fa-clock me-2"></i>Horario Apertura</label>
+                                                </div>
+                                                <div class="form-floating">
+                                                    <input type="time" class="form-control" id="horario_cierre" required>
+                                                    <label for="horario_cierre"><i class="fas fa-clock me-2"></i>Horario Cierre</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-floating mb-3 mt-3">
+                                                <input type="url" class="form-control" id="imagen_url" placeholder="URL de imagen">
+                                                <label for="imagen_url"><i class="fas fa-image me-2"></i>URL de Imagen (opcional)</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="password" class="form-control" id="password" placeholder="Contraseña" required>
+                                                <label for="password"><i class="fas fa-lock me-2"></i>Contraseña</label>
+                                            </div>
+
+                                            <div class="form-floating mb-4">
+                                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmar Contraseña" required>
+                                                <label for="confirmPassword"><i class="fas fa-lock me-2"></i>Confirmar Contraseña</label>
+                                            </div>
+
+                                            <div class="form-check mb-4">
+                                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                                <label class="form-check-label" for="terms">
+                                                    Acepto los <a href="#" class="text-decoration-none">términos y condiciones</a>
+                                                </label>
+                                            </div>
+
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-outline-primary flex-fill" onclick="prevStep(2)">
+                                                    <i class="fas fa-arrow-left me-2"></i>Anterior
+                                                </button>
+                                                <button type="submit" class="btn btn-primary flex-fill">
+                                                    <i class="fas fa-check me-2"></i>Registrar Peluquería
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <p class="text-white">© 2024 StyleCut Pro - Conectando peluquerías con clientes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales
+        let map;
+        let marker;
+        let currentStep = 1;
+        let peluqueriaData = {};
+
+        // Inicializar partículas de fondo
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Inicializar Google Maps
+        function initMap() {
+            const defaultLocation = { lat: -31.4201, lng: -64.1888 }; // Córdoba, Argentina
+            
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
+                center: defaultLocation,
+                styles: [
+                    {
+                        featureType: 'all',
+                        elementType: 'geometry.fill',
+                        stylers: [{ color: '#f8f9fa' }]
+                    },
+                    {
+                        featureType: 'water',
+                        elementType: 'geometry.fill',
+                        stylers: [{ color: '#6f42c1' }]
+                    }
+                ]
+            });
+
+            marker = new google.maps.Marker({
+                position: defaultLocation,
+                map: map,
+                draggable: true,
+                title: 'Ubicación de tu peluquería'
+            });
+
+            // Autocomplete para la dirección
+            const autocomplete = new google.maps.places.Autocomplete(
+                document.getElementById('direccion'),
+                { types: ['address'] }
+            );
+
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                if (place.geometry) {
+                    map.setCenter(place.geometry.location);
+                    marker.setPosition(place.geometry.location);
+                    updateLocationInfo(place.geometry.location, place.formatted_address);
+                }
+            });
+
+            // Evento para cuando se arrastra el marcador
+            marker.addListener('dragend', function() {
+                const position = marker.getPosition();
+                const geocoder = new google.maps.Geocoder();
+                
+                geocoder.geocode({ location: position }, (results, status) => {
+                    if (status === 'OK' && results[0]) {
+                        document.getElementById('direccion').value = results[0].formatted_address;
+                        updateLocationInfo(position, results[0].formatted_address);
+                    }
+                });
+            });
+        }
+
+        // Actualizar información de ubicación
+        function updateLocationInfo(location, address) {
+            document.getElementById('coordinates').textContent = 
+                `${location.lat().toFixed(6)}, ${location.lng().toFixed(6)}`;
+            document.getElementById('fullAddress').textContent = address;
+            document.getElementById('locationInfo').style.display = 'block';
+            
+            // Guardar coordenadas para el registro
+            peluqueriaData.latitud = location.lat();
+            peluqueriaData.longitud = location.lng();
+        }
+
+        // Navegación entre pasos
+        function nextStep(step) {
+            if (validateCurrentStep()) {
+                // Guardar datos del paso actual
+                saveStepData(currentStep);
+                
+                // Ocultar paso actual
+                document.getElementById(`stepContent${currentStep}`).style.display = 'none';
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                document.getElementById(`step${currentStep}`).classList.add('completed');
+                
+                if (currentStep < 3) {
+                    document.getElementById(`line${currentStep}`).classList.add('completed');
+                }
+                
+                // Mostrar nuevo paso
+                currentStep = step;
+                document.getElementById(`stepContent${step}`).style.display = 'block';
+                document.getElementById(`stepContent${step}`).classList.add('fade-in');
+                document.getElementById(`step${step}`).classList.add('active');
+                
+                // Inicializar mapa si es el paso 2
+                if (step === 2 && !map) {
+                    setTimeout(initMap, 100);
+                }
+            }
+        }
+
+        function prevStep(step) {
+            // Ocultar paso actual
+            document.getElementById(`stepContent${currentStep}`).style.display = 'none';
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            if (currentStep < 3) {
+                document.getElementById(`line${currentStep}`).classList.remove('completed');
+            }
+            
+            // Mostrar paso anterior
+            currentStep = step;
+            document.getElementById(`stepContent${step}`).style.display = 'block';
+            document.getElementById(`step${step}`).classList.add('active');
+            document.getElementById(`step${step}`).classList.remove('completed');
+        }
+
+        // Validar paso actual
+        function validateCurrentStep() {
+            const currentStepElement = document.getElementById(`stepContent${currentStep}`);
+            const inputs = currentStepElement.querySelectorAll('input[required], textarea[required]');
+            
+            for (let input of inputs) {
+                if (!input.value.trim()) {
+                    input.focus();
+                    showError('Por favor, completa todos los campos obligatorios.');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Guardar datos del paso
+        function saveStepData(step) {
+            const stepElement = document.getElementById(`stepContent${step}`);
+            const inputs = stepElement.querySelectorAll('input, textarea, select');
+            
+            inputs.forEach(input => {
+                peluqueriaData[input.id] = input.value;
+            });
+        }
+
+        // Funciones de autenticación social
+        function loginWithGoogle() {
+            showSuccess('Funcionalidad de Google en desarrollo. Próximamente disponible.');
+        }
+
+        function loginWithFacebook() {
+            showSuccess('Funcionalidad de Facebook en desarrollo. Próximamente disponible.');
+        }
+
+        function loginWithApple() {
+            showSuccess('Funcionalidad de Apple en desarrollo. Próximamente disponible.');
+        }
+
+        // Probar demo
+        function tryDemo() {
+            showSuccess('Accediendo a la demo gratuita...');
+            setTimeout(() => {
+                window.location.href = "dashboard-peluqueria.html?demo=true";
+            }, 1500);
+        }
+
+        // Mostrar mensajes
+        function showSuccess(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        function showError(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                <i class="fas fa-exclamation-triangle me-2"></i>${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (email && password) {
+                    showSuccess('Iniciando sesión...');
+                    setTimeout(() => {
+                        window.location.href = "dashboard-

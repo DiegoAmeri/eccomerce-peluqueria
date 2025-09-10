@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleCut - Encuentra tu Peluquería</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6f42c1;
+            --secondary: #d63384;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .hero-section {
+            background: linear-gradient(rgba(111, 66, 193, 0.8), rgba(214, 51, 132, 0.8)), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .search-box {
+            background-color: white;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .search-input {
+            border: none;
+            box-shadow: none;
+            border-radius: 50px;
+        }
+        .search-input:focus {
+            box-shadow: none;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 50px;
+        }
+        .btn-primary:hover {
+            background-color: #5a32a3;
+            border-color: #5a32a3;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .badge-distance {
+            background-color: var(--primary);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        .rating {
+            color: #ffc107;
+        }
+        .filters {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .salon-card {
+            cursor: pointer;
+        }
+        .salon-info {
+            padding: 15px;
+        }
+        .salon-name {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+        .salon-address {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .salon-services {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .section-title {
+            position: relative;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        .section-title:after {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cut"></i> StyleCut
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Peluquerías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Cómo Funciona</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contacto</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="login.html" class="btn btn-outline-primary me-2">Iniciar Sesión</a>
+                    <a href="login.html" class="btn btn-primary">Registrarse</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Encuentra la mejor peluquería cerca de ti</h1>
+            <p class="lead">Reserva tu turno online en simples pasos y ahorra tiempo</p>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-0"><i class="fas fa-map-marker-alt text-primary"></i></span>
+                            <input type="text" class="form-control search-input" placeholder="¿Dónde te encuentras?">
+                            <button class="btn btn-primary">Buscar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="filters">
+                    <h5 class="section-title">Filtros</h5>
+                    
+                    <div class="mb-4">
+                        <h6>Distancia</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="distance" id="distance1" checked>
+                            <label class="form-check-label" for="distance1">Menos de 1 km</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="distance" id="distance2">
+                            <label class="form-check-label" for="distance2">1-3 km</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="distance" id="distance3">
+                            <label class="form-check-label" for="distance3">3-5 km</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="distance" id="distance4">
+                            <label class="form-check-label" for="distance4">Cualquier distancia</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Servicios</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="service1" checked>
+                            <label class="form-check-label" for="service1">Corte de Cabello</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="service2" checked>
+                            <label class="form-check-label" for="service2">Barba</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="service3">
+                            <label class="form-check-label" for="service3">Tintura</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="service4">
+                            <label class="form-check-label" for="service4">Manicura</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Calificación</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rating5" checked>
+                            <label class="form-check-label" for="rating5">
+                                <span class="rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rating4" checked>
+                            <label class="form-check-label" for="rating4">
+                                <span class="rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i> +
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rating3">
+                            <label class="form-check-label" for="rating3">
+                                <span class="rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i> +
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100">Aplicar Filtros</button>
+                </div>
+            </div>
+            
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="section-title">Peluquerías Cercanas</h3>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Ordenar por: Distancia
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Distancia (cercano primero)</a></li>
+                            <li><a class="dropdown-item" href="#">Calificación</a></li>
+                            <li><a class="dropdown-item" href="#">Precio (menor primero)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Peluquería 1 -->
+                    <div class="col-md-6">
+                        <div class="card salon-card" onclick="selectSalon('stylecut-central')">
+                            <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="StyleCut Central">
+                            <div class="salon-info">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="salon-name">StyleCut Central</h5>
+                                    <span class="badge-distance">0.8 km</span>
+                                </div>
+                                <p class="salon-address">
+                                    <i class="fas fa-map-marker-alt me-1"></i> Av. Siempre Viva 742, Centro
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <span class="ms-1">4.5</span>
+                                    </div>
+                                    <div>
+                                        <span class="fw-bold">$10.000</span>
+                                        <span class="salon-services">Corte básico</span>
+                                    </div>
+                                </div>
+                                <p class="salon-services">
+                                    <i class="fas fa-scissors me-1"></i> Corte, Barba, Tintura
+                                </p>
+                                <button class="btn btn-primary w-100 mt-2">Reservar Turno</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Peluquería 2 -->
+                    <div class="col-md-6">
+                        <div class="card salon-card" onclick="selectSalon('elite-barbers')">
+                            <img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Elite Barbers">
+                            <div class="salon-info">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="salon-name">Elite Barbers</h5>
+                                    <span class="badge-distance">1.2 km</span>
+                                </div>
+                                <p class="salon-address">
+                                    <i class="fas fa-map-marker-alt me-1"></i> Calle Falsa 123, Norte
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <span class="ms-1">4.9</span>
+                                    </div>
+                                    <div>
+                                        <span class="fw-bold">$15.000</span>
+                                        <span class="salon-services">Corte premium</span>
+                                    </div>
+                                </div>
+                                <p class="salon-services">
+                                    <i class="fas fa-scissors me-1"></i> Corte, Barba, Spa
+                                </p>
+                                <button class="btn btn-primary w-100 mt-2">Reservar Turno</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Peluquería 3 -->
+                    <div class="col-md-6">
+                        <div class="card salon-card" onclick="selectSalon('barba-elegante')">
+                            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Barba Elegante">
+                            <div class="salon-info">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="salon-name">Barba Elegante</h5>
+                                    <span class="badge-distance">1.5 km</span>
+                                </div>
+                                <p class="salon-address">
+                                    <i class="fas fa-map-marker-alt me-1"></i> Pje. San Martín 456, Este
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                        <span class="ms-1">4.2</span>
+                                    </div>
+                                    <div>
+                                        <span class="fw-bold">$8.000</span>
+                                        <span class="salon-services">Corte económico</span>
+                                    </div>
+                                </div>
+                                <p class="salon-services">
+                                    <i class="fas fa-scissors me-1"></i> Corte, Barba
+                                </p>
+                                <button class="btn btn-primary w-100 mt-2">Reservar Turno</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Peluquería 4 -->
+                    <div class="col-md-6">
+                        <div class="card salon-card" onclick="selectSalon('hair-lounge')">
+                            <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Hair Lounge">
+                            <div class="salon-info">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="salon-name">Hair Lounge</h5>
+                                    <span class="badge-distance">2.1 km</span>
+                                </div>
+                                <p class="salon-address">
+                                    <i class="fas fa-map-marker-alt me-1"></i> Blvd. Los Andes 789, Oeste
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <span class="ms-1">4.7</span>
+                                    </div>
+                                    <div>
+                                        <span class="fw-bold">$12.000</span>
+                                        <span class="salon-services">Corte estándar</span>
+                                    </div>
+                                </div>
+                                <p class="salon-services">
+                                    <i class="fas fa-scissors me-1"></i> Corte, Coloración, Tratamientos
+                                </p>
+                                <button class="btn btn-primary w-100 mt-2">Reservar Turno</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-cut"></i> StyleCut</h5>
+                    <p>El sistema de gestión de turnos para peluquerías más eficiente del mercado.</p>
+                </div>
+                <div class="col-md-2">
+                    <h5>Enlaces</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Inicio</a></li>
+                        <li><a href="#" class="text-white">Peluquerías</a></li>
+                        <li><a href="#" class="text-white">Cómo Funciona</a></li>
+                        <li><a href="#" class="text-white">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Legal</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Términos y Condiciones</a></li>
+                        <li><a href="#" class="text-white">Política de Privacidad</a></li>
+                        <li><a href="#" class="text-white">Cookies</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contacto</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@stylecut.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +54 351 123-4567</li>
+                        <li class="mt-2">
+                            <a href="#" class="text-white me-2"><i class="fab fa-facebook fa-lg"></i></a>
+                            <a href="#" class="text-white me-2"><i class="fab fa-instagram fa-lg"></i></a>
+                            <a href="#" class="text-white"><i class="fab fa-whatsapp fa-lg"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p class="mb-0">© 2023 StyleCut. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function selectSalon(salonId) {
+            // Redirigir a la página específica de la peluquería
+            window.location.href = `https://www.barbersite.com/${salonId}`;
+        }
+        
+        // Simular geolocalización y ordenamiento por distancia
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aquí iría la lógica para obtener la ubicación del usuario
+            // y ordenar las peluquerías por distancia
+            
+            console.log('Peluquerías ordenadas por distancia (simulado)');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleCut - Reserva de Turnos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6f42c1;
+            --secondary: #d63384;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .salon-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .salon-card:hover {
+            transform: translateY(-5px);
+        }
+        .salon-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .salon-info {
+            padding: 15px;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .btn-primary:hover {
+            background-color: #5a32a3;
+            border-color: #5a32a3;
+        }
+        .time-slot {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            min-width: 80px;
+        }
+        .time-slot:hover {
+            background-color: #e9ecef;
+        }
+        .time-slot.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+        .time-slot.unavailable {
+            background-color: #dc3545;
+            color: white;
+            cursor: not-allowed;
+        }
+        .time-slot.pending {
+            background-color: #ffc107;
+            color: black;
+            cursor: not-allowed;
+        }
+        .time-slot.available {
+            background-color: #198754;
+            color: white;
+        }
+        .stylist-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .stylist-card:hover {
+            border-color: var(--primary);
+            background-color: rgba(111, 66, 193, 0.05);
+        }
+        .stylist-card.selected {
+            border-color: var(--primary);
+            background-color: rgba(111, 66, 193, 0.1);
+        }
+        .stylist-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .calendar-day {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.2s;
+        }
+        .calendar-day:hover {
+            background-color: #e9ecef;
+        }
+        .calendar-day.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+        .calendar-day.unavailable {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .modal-header {
+            background-color: var(--primary);
+            color: white;
+        }
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .progress-bar {
+            background-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cut"></i> StyleCut</h1>
+            <p class="lead">Sistema de Reserva de Turnos</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="salon-card" data-bs-toggle="modal" data-bs-target="#reservationModal">
+                    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         class="salon-img" alt="StyleCut Central">
+                    <div class="salon-info">
+                        <h3>StyleCut Central</h3>
+                        <p class="text-muted">Av. Siempre Viva 742, Centro</p>
+                        <p>Reserva tu turno con nuestros profesionales</p>
+                        <button class="btn btn-primary w-100">Reservar Turno</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Reserva -->
+    <div class="modal fade" id="reservationModal" tabindex="-1" aria-labelledby="reservationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reservationModalLabel">Reservar Turno - StyleCut Central</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Barra de progreso -->
+                    <div class="progress mb-4" style="height: 10px;">
+                        <div class="progress-bar" role="progressbar" style="width: 25%;" id="progress-bar"></div>
+                    </div>
+                    
+                    <!-- Paso 1: Selección de Peluquero -->
+                    <div class="step active" id="step1">
+                        <h5 class="mb-3">Selecciona un profesional</h5>
+                        <div class="stylist-card" data-stylist-id="1">
+                            <div class="d-flex align-items-center">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" class="stylist-img" alt="Jorge">
+                                <div>
+                                    <h6 class="mb-1">Jorge</h6>
+                                    <p class="text-muted mb-1">Especialista en cortes modernos</p>
+                                    <div class="rating">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star-half-alt text-warning"></i>
+                                        <span>4.5 (128 reseñas)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stylist-card" data-stylist-id="2">
+                            <div class="d-flex align-items-center">
+                                <img src="https://randomuser.me/api/portraits/men/22.jpg" class="stylist-img" alt="Nacho">
+                                <div>
+                                    <h6 class="mb-1">Nacho</h6>
+                                    <p class="text-muted mb-1">Especialista en barbas y estilos clásicos</p>
+                                    <div class="rating">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <span>4.9 (204 reseñas)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stylist-card" data-stylist-id="3">
+                            <div class="d-flex align-items-center">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" class="stylist-img" alt="Laura">
+                                <div>
+                                    <h6 class="mb-1">Laura</h6>
+                                    <p class="text-muted mb-1">Colorista profesional</p>
+                                    <div class="rating">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="far fa-star text-warning"></i>
+                                        <span>4.2 (97 reseñas)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 2: Selección de Fecha -->
+                    <div class="step" id="step2">
+                        <h5 class="mb-3">Selecciona una fecha</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Mes</label>
+                            <select class="form-select" id="month-select">
+                                <option value="0">Enero</option>
+                                <option value="1">Febrero</option>
+                                <option value="2">Marzo</option>
+                                <option value="3">Abril</option>
+                                <option value="4">Mayo</option>
+                                <option value="5">Junio</option>
+                                <option value="6">Julio</option>
+                                <option value="7">Agosto</option>
+                                <option value="8">Septiembre</option>
+                                <option value="9">Octubre</option>
+                                <option value="10">Noviembre</option>
+                                <option value="11">Diciembre</option>
+                            </select>
+                        </div>
+                        
+                        <div class="calendar-container mb-3">
+                            <div class="row" id="calendar-days">
+                                <!-- Los días se generarán con JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 3: Selección de Horario -->
+                    <div class="step" id="step3">
+                        <h5 class="mb-3">Selecciona un horario</h5>
+                        <p class="text-muted" id="selected-date-text">Fecha seleccionada: </p>
+                        
+                        <h6>Turnos de la mañana (8:00 - 12:00)</h6>
+                        <div class="d-flex flex-wrap mb-4" id="morning-slots">
+                            <!-- Los horarios de la mañana se generarán con JavaScript -->
+                        </div>
+                        
+                        <h6>Turnos de la tarde (16:00 - 21:00)</h6>
+                        <div class="d-flex flex-wrap" id="afternoon-slots">
+                            <!-- Los horarios de la tarde se generarán con JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 4: Datos del Cliente -->
+                    <div class="step" id="step4">
+                        <h5 class="mb-3">Completa tus datos</h5>
+                        <form id="client-form">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="client-name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Apellido</label>
+                                    <input type="text" class="form-control" id="client-lastname" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="client-phone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email (opcional)</label>
+                                <input type="email" class="form-control" id="client-email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Notas adicionales (opcional)</label>
+                                <textarea class="form-control" rows="2" placeholder="Especificaciones especiales para tu turno..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Resumen de Reserva -->
+                    <div class="step" id="step5">
+                        <h5 class="mb-3">Resumen de tu reserva</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Peluquero:</div>
+                                    <div class="col-sm-8" id="summary-stylist"></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Fecha:</div>
+                                    <div class="col-sm-8" id="summary-date"></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Horario:</div>
+                                    <div class="col-sm-8" id="summary-time"></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Cliente:</div>
+                                    <div class="col-sm-8" id="summary-client"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4 fw-bold">Teléfono:</div>
+                                    <div class="col-sm-8" id="summary-phone"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" id="terms-check" required>
+                            <label class="form-check-label" for="terms-check">
+                                Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="prev-btn" style="display: none;">Anterior</button>
+                    <button type="button" class="btn btn-primary" id="next-btn">Siguiente</button>
+                    <button type="button" class="btn btn-success" id="confirm-btn" style="display: none;">Confirmar Reserva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales
+        let currentStep = 1;
+        let selectedStylist = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        
+        // Elementos del DOM
+        const progressBar = document.getElementById('progress-bar');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const confirmBtn = document.getElementById('confirm-btn');
+        const selectedDateText = document.getElementById('selected-date-text');
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar evento para selección de peluquero
+            document.querySelectorAll('.stylist-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.stylist-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedStylist = this.getAttribute('data-stylist-id');
+                });
+            });
+            
+            // Configurar botones de navegación
+            prevBtn.addEventListener('click', goToPreviousStep);
+            nextBtn.addEventListener('click', goToNextStep);
+            confirmBtn.addEventListener('click', confirmReservation);
+            
+            // Inicializar calendario
+            initializeCalendar();
+            
+            // Establecer mes actual
+            const now = new Date();
+            document.getElementById('month-select').value = now.getMonth();
+            generateCalendarDays(now.getMonth(), now.getFullYear());
+        });
+        
+        // Funciones de navegación
+        function goToPreviousStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep--;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateNavigation();
+            }
+        }
+        
+        function goToNextStep() {
+            // Validaciones antes de avanzar
+            if (currentStep === 1 && !selectedStylist) {
+                alert('Por favor, selecciona un peluquero');
+                return;
+            }
+            
+            if (currentStep === 2 && !selectedDate) {
+                alert('Por favor, selecciona una fecha');
+                return;
+            }
+            
+            if (currentStep === 3 && !selectedTime) {
+                alert('Por favor, selecciona un horario');
+                return;
+            }
+            
+            if (currentStep === 4) {
+                // Validar formulario
+                const name = document.getElementById('client-name').value;
+                const lastname = document.getElementById('client-lastname').value;
+                const phone = document.getElementById('client-phone').value;
+                
+                if (!name || !lastname || !phone) {
+                    alert('Por favor, completa todos los campos obligatorios');
+                    return;
+                }
+                
+                // Actualizar resumen
+                updateReservationSummary();
+            }
+            
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            currentStep++;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            
+            // Acciones específicas por paso
+            if (currentStep === 3) {
+                selectedDateText.textContent = `Fecha seleccionada: ${formatDate(selectedDate)}`;
+                generateTimeSlots();
+            }
+            
+            updateNavigation();
+        }
+        
+        function updateNavigation() {
+            // Actualizar barra de progreso
+            progressBar.style.width = `${(currentStep / 5) * 100}%`;
+            
+            // Mostrar/ocultar botones
+            prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
+            nextBtn.style.display = currentStep < 5 ? 'block' : 'none';
+            confirmBtn.style.display = currentStep === 5 ? 'block' : 'none';
+            
+            // Cambiar texto del botón "Siguiente" en el último paso
+            if (currentStep === 4) {
+                nextBtn.textContent = 'Revisar Reserva';
+            } else {
+                nextBtn.textContent = 'Siguiente';
+            }
+        }
+        
+        // Funciones del calendario
+        function initializeCalendar() {
+            const monthSelect = document.getElementById('month-select');
+            monthSelect.addEventListener('change', function() {
+                const year = new Date().getFullYear();
+                generateCalendarDays(parseInt(this.value), year);
+            });
+        }
+        
+        function generateCalendarDays(month, year) {
+            const calendarDays = document.getElementById('calendar-days');
+            calendarDays.innerHTML = '';
+            
+            // Obtener primer día del mes y cantidad de días
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            
+            // Crear días del calendario
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayDate = new Date(year, month, i);
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day col-3 col-md-2';
+                
+                // No permitir seleccionar días pasados
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (dayDate < today) {
+                    dayElement.classList.add('unavailable');
+                } else {
+                    dayElement.setAttribute('data-date', dayDate.toISOString().split('T')[0]);
+                    dayElement.addEventListener('click', function() {
+                        document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selectedDate = this.getAttribute('data-date');
+                    });
+                }
+                
+                dayElement.textContent = i;
+                calendarDays.appendChild(dayElement);
+            }
+        }
+        
+        // Generar horarios disponibles
+        function generateTimeSlots() {
+            const morningSlots = document.getElementById('morning-slots');
+            const afternoonSlots = document.getElementById('afternoon-slots');
+            morningSlots.innerHTML = '';
+            afternoonSlots.innerHTML = '';
+            
+            // Generar horarios de mañana (8:00 - 12:00)
+            for (let hour = 8; hour < 12; hour++) {
+                for (let minute = 0; minute < 60; minute += 30) {
+                    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const slot = createTimeSlot(timeString);
+                    morningSlots.appendChild(slot);
+                }
+            }
+            
+            // Generar horarios de tarde (16:00 - 21:00)
+            for (let hour = 16; hour < 21; hour++) {
+                for (let minute = 0; minute < 60; minute += 30) {
+                    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const slot = createTimeSlot(timeString);
+                    afternoonSlots.appendChild(slot);
+                }
+            }
+        }
+        
+        function createTimeSlot(time) {
+            const slot = document.createElement('div');
+            slot.className = 'time-slot';
+            slot.textContent = time;
+            
+            // Simular disponibilidad (en una app real, esto vendría del servidor)
+            const random = Math.random();
+            if (random < 0.3) {
+                slot.classList.add('unavailable'); // No disponible
+            } else if (random < 0.6) {
+                slot.classList.add('pending'); // Pendiente de confirmación
+            } else {
+                slot.classList.add('available'); // Disponible
+                slot.addEventListener('click', function() {
+                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedTime = time;
+                });
+            }
+            
+            return slot;
+        }
+        
+        // Actualizar resumen de reserva
+        function updateReservationSummary() {
+            const stylistName = document.querySelector('.stylist-card.selected h6').textContent;
+            const clientName = document.getElementById('client-name').value;
+            const clientLastname = document.getElementById('client-lastname').value;
+            const clientPhone = document.getElementById('client-phone').value;
+            
+            document.getElementById('summary-stylist').textContent = stylistName;
+            document.getElementById('summary-date').textContent = formatDate(selectedDate);
+            document.getElementById('summary-time').textContent = selectedTime;
+            document.getElementById('summary-client').textContent = `${clientName} ${clientLastname}`;
+            document.getElementById('summary-phone').textContent = clientPhone;
+        }
+        
+        // Confirmar reserva
+        function confirmReservation() {
+            if (!document.getElementById('terms-check').checked) {
+                alert('Debes aceptar los términos y condiciones para continuar');
+                return;
+            }
+            
+            // Simular envío de reserva
+            alert('¡Turno reservado con éxito! Recibirás una confirmación por SMS.');
+            
+            // Cerrar modal después de reservar
+            const modal = bootstrap.Modal.getInstance(document.getElementById('reservationModal'));
+            modal.hide();
+            
+            // Reiniciar el formulario para futuras reservas
+            resetReservationForm();
+        }
+        
+        // Reiniciar formulario
+        function resetReservationForm() {
+            currentStep = 1;
+            selectedStylist = null;
+            selectedDate = null;
+            selectedTime = null;
+            
+            document.querySelectorAll('.step').forEach((step, index) => {
+                step.classList.remove('active');
+                if (index === 0) step.classList.add('active');
+            });
+            
+            document.querySelectorAll('.stylist-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            
+            document.getElementById('client-form').reset();
+            document.getElementById('terms-check').checked = false;
+            
+            updateNavigation();
+        }
+        
+        // Utilidades
+        function formatDate(dateString) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+    </script>
+</body>
+</html>

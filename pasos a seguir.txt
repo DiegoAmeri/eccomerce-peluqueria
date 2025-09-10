@@ -1,0 +1,54 @@
+pasos a seguir_
+ TABLAS CREADAS (13):
+calificaciones ⭐
+
+clientes 👥
+
+configuraciones ⚙️
+
+peluqueria_imagenes 🖼️
+
+peluqueria_peluqueros 🔗
+
+peluqueria_servicios ✂️
+
+peluquerias 🏬
+
+peluqueros 💈
+
+servicios ✨
+
+spring_session 🔐
+
+spring_session_attributes 🗝️
+
+turnos 🗓️
+
+usuarios 👤
+
+🔍 ¿Qué significa cada grupo?
+Grupo	Tablas	Función
+Authentication	usuarios, spring_session, spring_session_attributes	Login y seguridad
+Core Business	clientes, servicios, turnos, configuraciones	Funcionalidad principal
+Portal Clientes	peluquerias, calificaciones, peluqueria_imagenes	Sistema de reservas público
+Gestión Staff	peluqueros, peluqueria_peluqueros, peluqueria_servicios	Administración de empleados
+🚀 PRÓXIMOS PASOS RECOMENDADOS:
+✅ Verificar relaciones entre tablas (FKs correctas)
+
+✅ Insertar datos de prueba
+
+✅ Crear los repositories Java para cada entidad
+
+✅ Implementar servicios de autenticación
+
+✅ Desarrollar controllers para el API
+
+¿Te gustaría que procedamos con alguno de estos pasos? Puedo ayudarte con:
+
+✍️ Crear las entidades Java correspondientes a todas las tablas
+
+🗃️ Implementar los repositories con Spring Data JPA
+
+🔐 Desarrollar el sistema de autenticación JWT
+
+🌐 Crear endpoints API para el registro/login de peluqueros
