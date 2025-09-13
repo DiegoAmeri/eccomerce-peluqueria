@@ -50,13 +50,11 @@
           
           <template v-else>
             <li class="nav-item">
-              <router-link class="nav-link" to="/login">
-                <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
+              <router-link to="/auth/login" class="btn btn-outline-primary me-2">
+                Iniciar Sesión
               </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/register">
-                <i class="fas fa-user-plus me-1"></i> Registrarse
+              <router-link to="/auth/register" class="btn btn-primary">
+                Registrarse
               </router-link>
             </li>
           </template>

@@ -35,4 +35,16 @@ export default {
   padding: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
+
+/* Responsive improvements */
+@media (max-width: 480px) {
+  .auth-layout {
+    padding: 10px;
+  }
+  
+  .auth-card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+}
 </style>

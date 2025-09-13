@@ -1,43 +1,77 @@
 <template>
   <div class="auth-layout">
-    <div class="auth-background">
-      <div class="auth-background-overlay"></div>
-      <div class="auth-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
+    <!-- Left Side - Branding -->
+    <div class="branding-side">
+      <div class="branding-content">
+        <div class="brand-logo">
+          <i class="fas fa-cut"></i>
+          <span>StyleCut Pro</span>
+        </div>
+        <div class="hero-content">
+          <h1 class="hero-title">Únete a nosotros</h1>
+          <p class="hero-subtitle">
+            Comienza tu transformación digital en el mundo de la belleza
+          </p>
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-number">5,000+</span>
+              <span class="stat-label">Profesionales</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">50,000+</span>
+              <span class="stat-label">Citas gestionadas</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">99%</span>
+              <span class="stat-label">Satisfacción</span>
+            </div>
+          </div>
+        </div>
+        <div class="benefits">
+          <h3>¿Por qué elegir StyleCut Pro?</h3>
+          <div class="benefit-list">
+            <div class="benefit">
+              <i class="fas fa-rocket"></i>
+              <div>
+                <strong>Fácil de usar</strong>
+                <p>Interfaz intuitiva diseñada para todos</p>
+              </div>
+            </div>
+            <div class="benefit">
+              <i class="fas fa-shield-alt"></i>
+              <div>
+                <strong>Seguro y confiable</strong>
+                <p>Tus datos están protegidos</p>
+              </div>
+            </div>
+            <div class="benefit">
+              <i class="fas fa-headset"></i>
+              <div>
+                <strong>Soporte 24/7</strong>
+                <p>Estamos aquí para ayudarte</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="decorative-elements">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
       </div>
     </div>
-    
-    <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <router-link to="/" class="auth-logo">
-            <i class="fas fa-cut"></i>
-            <span>StyleCut Pro</span>
-          </router-link>
-          <h1>Únete a nosotros</h1>
-          <p>Crea tu cuenta y comienza a disfrutar de nuestros servicios</p>
-        </div>
 
+    <!-- Right Side - Register Form -->
+    <div class="form-side">
+      <div class="form-container">
         <RegisterForm />
         
-        <div class="auth-footer">
-          <p>¿Ya tienes una cuenta? 
-            <router-link to="/login" class="auth-link">Inicia sesión aquí</router-link>
-          </p>
-          <div class="auth-divider">
-            <span>o</span>
-          </div>
-          <div class="social-login">
-            <button class="btn btn-social btn-google">
-              <i class="fab fa-google"></i>
-              Registrarse con Google
-            </button>
-            <button class="btn btn-social btn-facebook">
-              <i class="fab fa-facebook-f"></i>
-              Registrarse con Facebook
-            </button>
+        <!-- Additional Info -->
+        <div class="auth-extras">
+          <div class="security-note">
+            <i class="fas fa-lock"></i>
+            <span>Tu información está segura y protegida con encriptación de nivel bancario</span>
           </div>
         </div>
       </div>
@@ -54,7 +88,6 @@ export default {
     RegisterForm
   },
   beforeMount() {
-    // Si el usuario ya está autenticado, redirigir al dashboard
     if (this.$store.getters.isAuthenticated) {
       this.$router.push('/dashboard');
     }
@@ -63,202 +96,224 @@ export default {
 </script>
 
 <style scoped>
-/* Los estilos son los mismos que LoginView.vue */
 .auth-layout {
   min-height: 100vh;
-  display: flex;
-  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.auth-background {
-  flex: 1;
-  background: linear-gradient(135deg, #6f42c1 0%, #d63384 100%);
+.branding-side {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow: hidden;
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
 }
 
-.auth-background-overlay {
+.branding-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  max-width: 450px;
+  width: 100%;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  animation: fadeInUp 0.8s ease;
+}
+
+.brand-logo i {
+  margin-right: 12px;
+  font-size: 2.2rem;
+}
+
+.hero-content {
+  margin-bottom: 40px;
+  animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.benefits {
+  animation: fadeInUp 0.8s ease 0.4s both;
+}
+
+.benefits h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.benefit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  text-align: left;
+}
+
+.benefit i {
+  font-size: 1.2rem;
+  margin-top: 4px;
+  opacity: 0.9;
+}
+
+.benefit strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.benefit p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.decorative-elements {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="50" r="1.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.3;
+  pointer-events: none;
 }
 
-.auth-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.shape {
+.floating-shape {
   position: absolute;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
+  animation: float 8s ease-in-out infinite;
 }
 
 .shape-1 {
-  width: 300px;
-  height: 300px;
-  top: -150px;
-  right: -150px;
+  width: 180px;
+  height: 180px;
+  top: -90px;
+  right: -90px;
+  animation-delay: 0s;
 }
 
 .shape-2 {
-  width: 200px;
-  height: 200px;
-  bottom: 100px;
-  left: -100px;
+  width: 120px;
+  height: 120px;
+  bottom: -60px;
+  left: -60px;
+  animation-delay: 2s;
 }
 
 .shape-3 {
-  width: 150px;
-  height: 150px;
-  bottom: -75px;
-  right: 100px;
+  width: 80px;
+  height: 80px;
+  top: 30%;
+  right: -40px;
+  animation-delay: 4s;
 }
 
-.auth-container {
-  flex: 1;
+.shape-4 {
+  width: 60px;
+  height: 60px;
+  top: 60%;
+  left: -30px;
+  animation-delay: 6s;
+}
+
+.form-side {
+  background: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: #f8f9fa;
+  overflow-y: auto;
 }
 
-.auth-card {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+.form-container {
   width: 100%;
-  max-width: 500px;
-  animation: slideUp 0.5s ease;
+  max-width: 600px;
+  margin: auto;
 }
 
-.auth-header {
-  text-align: center;
-  margin-bottom: 30px;
+.auth-extras {
+  margin-top: 24px;
 }
 
-.auth-logo {
-  display: inline-flex;
-  align-items: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #6f42c1;
-  text-decoration: none;
-  margin-bottom: 20px;
-}
-
-.auth-logo i {
-  margin-right: 10px;
-  font-size: 2rem;
-}
-
-.auth-header h1 {
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 10px;
-  font-size: 1.8rem;
-}
-
-.auth-header p {
-  color: #6c757d;
-  margin: 0;
-}
-
-.auth-footer {
-  margin-top: 30px;
-  text-align: center;
-}
-
-.auth-link {
-  color: #6f42c1;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.auth-link:hover {
-  text-decoration: underline;
-}
-
-.auth-divider {
-  position: relative;
-  margin: 25px 0;
-  text-align: center;
-}
-
-.auth-divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #e9ecef;
-}
-
-.auth-divider span {
-  background: white;
-  padding: 0 15px;
-  color: #6c757d;
-  position: relative;
-  z-index: 1;
-}
-
-.social-login {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.btn-social {
+.security-note {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border: 2px solid #e9ecef;
-  border-radius: 10px;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #667eea;
+  text-align: center;
 }
 
-.btn-social:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.security-note i {
+  font-size: 1rem;
 }
 
-.btn-google {
-  color: #4285f4;
-  border-color: #e9ecef;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-25px) rotate(15deg);
+  }
 }
 
-.btn-google:hover {
-  background: #4285f4;
-  color: white;
-  border-color: #4285f4;
-}
-
-.btn-facebook {
-  color: #3b5998;
-  border-color: #e9ecef;
-}
-
-.btn-facebook:hover {
-  background: #3b5998;
-  color: white;
-  border-color: #3b5998;
-}
-
-@keyframes slideUp {
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(30px);
@@ -269,23 +324,87 @@ export default {
   }
 }
 
-@media (min-width: 992px) {
-  .auth-background {
-    display: block;
+@media (max-width: 1200px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
-  
-  .auth-container {
-    padding: 40px;
+
+  .stat-number {
+    font-size: 1.5rem;
   }
 }
 
-@media (max-width: 576px) {
-  .auth-card {
-    padding: 30px 20px;
+@media (max-width: 1024px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
   }
   
-  .auth-header h1 {
+  .branding-side {
+    display: none;
+  }
+  
+  .form-side {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .stat-number {
+    font-size: 1.3rem;
+  }
+  
+  .benefits h3 {
+    font-size: 1.1rem;
+  }
+  
+  .benefit {
+    gap: 12px;
+  }
+  
+  .benefit strong {
+    font-size: 0.9rem;
+  }
+  
+  .benefit p {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .branding-content {
+    padding: 20px 0;
+  }
+  
+  .brand-logo {
     font-size: 1.5rem;
+    margin-bottom: 24px;
+  }
+  
+  .brand-logo i {
+    font-size: 1.8rem;
+  }
+  
+  .hero-content {
+    margin-bottom: 24px;
+  }
+  
+  .security-note {
+    font-size: 0.8rem;
+    padding: 10px 12px;
   }
 }
 </style>

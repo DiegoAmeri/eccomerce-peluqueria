@@ -1,43 +1,66 @@
 <template>
   <div class="auth-layout">
-    <div class="auth-background">
-      <div class="auth-background-overlay"></div>
-      <div class="auth-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
+    <!-- Left Side - Branding -->
+    <div class="branding-side">
+      <div class="branding-content">
+        <div class="brand-logo">
+          <i class="fas fa-cut"></i>
+          <span>StyleCut Pro</span>
+        </div>
+        <div class="hero-content">
+          <h1 class="hero-title">Bienvenido de vuelta</h1>
+          <p class="hero-subtitle">
+            Tu plataforma favorita para gestionar citas de belleza
+          </p>
+          <div class="features">
+            <div class="feature">
+              <i class="fas fa-calendar-check"></i>
+              <span>Agenda inteligente</span>
+            </div>
+            <div class="feature">
+              <i class="fas fa-users"></i>
+              <span>Gestión de clientes</span>
+            </div>
+            <div class="feature">
+              <i class="fas fa-chart-line"></i>
+              <span>Reportes detallados</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <blockquote>
+            "StyleCut Pro transformó completamente la forma en que manejo mi salón."
+          </blockquote>
+          <cite>- María González, Propietaria</cite>
+        </div>
       </div>
     </div>
-    
-    <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <router-link to="/" class="auth-logo">
-            <i class="fas fa-cut"></i>
-            <span>StyleCut Pro</span>
-          </router-link>
-          <h1>Bienvenido de vuelta</h1>
-          <p>Ingresa a tu cuenta para continuar</p>
-        </div>
 
+    <!-- Right Side - Login Form -->
+    <div class="form-side">
+      <div class="form-container">
         <LoginForm />
         
-        <div class="auth-footer">
-          <p>¿No tienes una cuenta? 
-            <router-link to="/register" class="auth-link">Regístrate aquí</router-link>
-          </p>
-          <div class="auth-divider">
-            <span>o</span>
+        <!-- Additional Options -->
+        <div class="auth-extras">
+          <div class="divider">
+            <span>o continúa con</span>
           </div>
-          <div class="social-login">
-            <button class="btn btn-social btn-google">
+          
+          <div class="social-buttons">
+            <button class="social-btn google-btn">
               <i class="fab fa-google"></i>
-              Continuar con Google
+              Google
             </button>
-            <button class="btn btn-social btn-facebook">
+            <button class="social-btn facebook-btn">
               <i class="fab fa-facebook-f"></i>
-              Continuar con Facebook
+              Facebook
             </button>
+          </div>
+          
+          <div class="help-links">
+            <router-link to="/auth/forgot-password" class="help-link">¿Problemas para acceder?</router-link>
+            <a href="#" class="help-link">Centro de ayuda</a>
           </div>
         </div>
       </div>
@@ -54,9 +77,19 @@ export default {
     LoginForm
   },
   beforeMount() {
-    // Si el usuario ya está autenticado, redirigir al dashboard
     if (this.$store.getters.isAuthenticated) {
-      this.$router.push('/dashboard');
+      const userRole = this.$store.getters.userType;
+      switch (userRole) {
+        case 'client':
+          this.$router.push('/dashboard');
+          break;
+        case 'barber':
+          this.$router.push('/barber/dashboard');
+          break;
+        case 'owner':
+          this.$router.push('/owner/dashboard');
+          break;
+      }
     }
   }
 };
@@ -66,225 +99,236 @@ export default {
 .auth-layout {
   min-height: 100vh;
   display: flex;
-  position: relative;
+  width: 100%;
 }
 
-.auth-background {
+.branding-side {
   flex: 1;
-  background: linear-gradient(135deg, #6f42c1 0%, #d63384 100%);
-  position: relative;
-  overflow: hidden;
-  display: none;
-}
-
-.auth-background-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="50" r="1.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.3;
-}
-
-.auth-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.shape {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.shape-1 {
-  width: 300px;
-  height: 300px;
-  top: -150px;
-  right: -150px;
-}
-
-.shape-2 {
-  width: 200px;
-  height: 200px;
-  bottom: 100px;
-  left: -100px;
-}
-
-.shape-3 {
-  width: 150px;
-  height: 150px;
-  bottom: -75px;
-  right: 100px;
-}
-
-.auth-container {
-  flex: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  background: #f8f9fa;
-}
-
-.auth-card {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   padding: 40px;
+  color: white;
+}
+
+.branding-content {
+  max-width: 400px;
   width: 100%;
-  max-width: 450px;
-  animation: slideUp 0.5s ease;
 }
 
-.auth-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.auth-logo {
-  display: inline-flex;
+.brand-logo {
+  display: flex;
   align-items: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #6f42c1;
-  text-decoration: none;
-  margin-bottom: 20px;
-}
-
-.auth-logo i {
-  margin-right: 10px;
-  font-size: 2rem;
-}
-
-.auth-header h1 {
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 10px;
+  justify-content: center;
   font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 40px;
 }
 
-.auth-header p {
-  color: #6c757d;
-  margin: 0;
+.brand-logo i {
+  margin-right: 12px;
+  font-size: 2.2rem;
 }
 
-.auth-footer {
-  margin-top: 30px;
-  text-align: center;
+.hero-content {
+  margin-bottom: 40px;
 }
 
-.auth-link {
-  color: #6f42c1;
-  text-decoration: none;
-  font-weight: 600;
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.2;
 }
 
-.auth-link:hover {
-  text-decoration: underline;
+.hero-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 32px;
+  line-height: 1.5;
 }
 
-.auth-divider {
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+}
+
+.feature i {
+  width: 20px;
+  font-size: 1.1rem;
+}
+
+.testimonial {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.testimonial blockquote {
+  font-style: italic;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.testimonial cite {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.form-side {
+  flex: 1;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-extras {
+  margin-top: 32px;
+}
+
+.divider {
   position: relative;
-  margin: 25px 0;
   text-align: center;
+  margin: 24px 0;
 }
 
-.auth-divider::before {
+.divider::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 0;
   right: 0;
   height: 1px;
-  background: #e9ecef;
+  background: #e2e8f0;
 }
 
-.auth-divider span {
-  background: white;
-  padding: 0 15px;
-  color: #6c757d;
+.divider span {
+  background: #f8fafc;
+  padding: 0 16px;
+  color: #64748b;
+  font-size: 0.9rem;
   position: relative;
   z-index: 1;
 }
 
-.social-login {
-  display: flex;
-  flex-direction: column;
+.social-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
+  margin-bottom: 24px;
 }
 
-.btn-social {
+.social-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border: 2px solid #e9ecef;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
   border-radius: 10px;
-  font-weight: 600;
+  background: white;
+  color: #475569;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.btn-social:hover {
+.social-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.btn-google {
-  color: #4285f4;
-  border-color: #e9ecef;
+.google-btn:hover {
+  border-color: #ea4335;
+  color: #ea4335;
 }
 
-.btn-google:hover {
-  background: #4285f4;
-  color: white;
-  border-color: #4285f4;
+.facebook-btn:hover {
+  border-color: #1877f2;
+  color: #1877f2;
 }
 
-.btn-facebook {
-  color: #3b5998;
-  border-color: #e9ecef;
+.help-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.btn-facebook:hover {
-  background: #3b5998;
-  color: white;
-  border-color: #3b5998;
+.help-link {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (min-width: 992px) {
-  .auth-background {
-    display: block;
+@media (max-width: 1024px) {
+  .auth-layout {
+    flex-direction: column;
   }
   
-  .auth-container {
-    padding: 40px;
+  .branding-side {
+    padding: 30px;
+    min-height: 40vh;
+  }
+  
+  .form-side {
+    padding: 30px;
+    min-height: 60vh;
   }
 }
 
-@media (max-width: 576px) {
-  .auth-card {
-    padding: 30px 20px;
+@media (max-width: 768px) {
+  .form-container {
+    max-width: 100%;
   }
   
-  .auth-header h1 {
+  .social-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .help-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .branding-side, .form-side {
+    padding: 20px;
+  }
+  
+  .brand-logo {
     font-size: 1.5rem;
+  }
+  
+  .brand-logo i {
+    font-size: 1.8rem;
+  }
+  
+  .hero-title {
+    font-size: 1.8rem;
   }
 }
 </style>

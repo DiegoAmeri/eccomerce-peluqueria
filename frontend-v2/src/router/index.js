@@ -4,6 +4,7 @@ import { useStore } from 'vuex';
 // Layout Components
 import MainLayout from '@/layouts/MainLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 
 // Auth Views
 import LoginView from '@/views/auth/LoginView.vue';
@@ -13,6 +14,7 @@ import ResetPasswordView from '@/views/auth/ResetPasswordView.vue';
 
 // Client Views
 import ClientDashboard from '@/views/client/ClientDashboard.vue';
+import HomeView from '@/views/client/HomeView.vue'
 import SalonListView from '@/views/client/SalonListView.vue';
 import SalonDetailView from '@/views/client/SalonDetailView.vue';
 import MyAppointmentsView from '@/views/client/MyAppointmentsView.vue';
@@ -43,7 +45,20 @@ import ServerErrorView from '@/views/ServerErrorView.vue';
 const routes = [
   {
     path: '/',
-    redirect: '/dashboard'
+    component: PublicLayout,
+    meta: { requiresAuth: false },
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: HomeView,
+        meta: { title: 'Inicio - StyleCut Pro' }
+      },
+      {
+        path: '/inicio',
+        redirect: '/'
+      }
+    ]
   },
 
   // Auth Routes
@@ -79,9 +94,9 @@ const routes = [
     ]
   },
 
-  // Client Routes
+ // Client Routes
   {
-    path: '/',
+    path: '/client',
     component: MainLayout,
     meta: { requiresAuth: true, role: 'client' },
     children: [
@@ -129,6 +144,7 @@ const routes = [
       }
     ]
   },
+
 
   // Barber Routes
   {
@@ -276,6 +292,12 @@ router.beforeEach(async (to, from, next) => {
   const store = useStore();
   const isAuthenticated = store.getters.isAuthenticated;
   const userRole = store.getters.userType;
+
+  // Permitir acceso a la página de inicio sin autenticación
+  if (to.path === '/' || to.path === '/inicio') {
+    next();
+    return;
+  }
 
   // Set page title
   if (to.meta.title) {

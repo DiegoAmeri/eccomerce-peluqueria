@@ -7,7 +7,7 @@
     <SideBar v-if="showSidebar" />
     
     <!-- Contenedor principal -->
-    <div :class="['main-content', { 'with-sidebar': showSidebar }]">
+    <div :class="['main-content', { 'with-sidebar': showSidebar, 'with-navbar': showNavbar }]">
       <!-- Transición suave entre vistas -->
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { computed, watch } from 'vue'
+import { computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -38,6 +38,7 @@ import SideBar from '@/components/common/SideBar.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import NotificationToast from '@/components/common/NotificationToast.vue'
 import ModalDialog from '@/components/common/ModalDialog.vue'
+import '@fortawesome/fontawesome-free/css/all.css'
 
 export default {
   name: 'App',
@@ -52,14 +53,14 @@ export default {
     const route = useRoute()
     const store = useStore()
     
-    // Determinar si mostrar la navbar (no en login/register)
+    // Determinar si mostrar la navbar (no en páginas de auth)
     const showNavbar = computed(() => {
-      return !['Login', 'Register'].includes(route.name)
+      return !route.path.startsWith('/auth')
     })
     
-    // Determinar si mostrar el sidebar (solo en dashboards)
+    // Determinar si mostrar el sidebar (solo en dashboards autenticados)
     const showSidebar = computed(() => {
-      return route.meta.requiresSidebar
+      return store.getters.isAuthenticated && !route.path.startsWith('/auth')
     })
     
     // Estado de carga global
@@ -70,28 +71,22 @@ export default {
       () => route.path,
       () => {
         // Verificar si el token ha expirado
-        store.dispatch('auth/verifyToken')
+        if (store.getters.isAuthenticated) {
+          store.dispatch('verifyToken')
+        }
       }
     )
+    
+    // Inicializar la aplicación
+    onMounted(() => {
+      store.dispatch('initializeApp')
+    })
     
     return {
       showNavbar,
       showSidebar,
       loading
     }
-  },
-  mounted() {
-    // Inicializar la verificación de autenticación al cargar la app
-    this.$store.dispatch('auth/verifyToken')
-    
-    // Escuchar eventos de red para mostrar estado de conexión
-    window.addEventListener('online', this.handleOnlineStatus)
-    window.addEventListener('offline', this.handleOfflineStatus)
-  },
-  beforeUnmount() {
-    // Limpiar event listeners
-    window.removeEventListener('online', this.handleOnlineStatus)
-    window.removeEventListener('offline', this.handleOfflineStatus)
   },
   methods: {
     handleOnlineStatus() {
@@ -106,6 +101,16 @@ export default {
         message: 'Estás trabajando sin conexión'
       })
     }
+  },
+  mounted() {
+    // Escuchar eventos de red para mostrar estado de conexión
+    window.addEventListener('online', this.handleOnlineStatus)
+    window.addEventListener('offline', this.handleOfflineStatus)
+  },
+  beforeUnmount() {
+    // Limpiar event listeners
+    window.removeEventListener('online', this.handleOnlineStatus)
+    window.removeEventListener('offline', this.handleOfflineStatus)
   }
 }
 </script>
@@ -147,8 +152,12 @@ body {
 
 .main-content {
   flex: 1;
-  padding-top: 70px; /* Altura de la navbar */
   transition: var(--transition);
+  width: 100%;
+}
+
+.main-content.with-navbar {
+  padding-top: 70px; /* Altura de la navbar */
 }
 
 .main-content.with-sidebar {
@@ -167,7 +176,13 @@ body {
   transition: var(--transition);
 }
 
-/* Responsividad */
+/* Responsividad mejorada */
+@media (max-width: 1200px) {
+  .main-content.with-sidebar {
+    padding-left: 220px;
+  }
+}
+
 @media (max-width: 992px) {
   .main-content.with-sidebar {
     padding-left: 0;
@@ -175,8 +190,14 @@ body {
 }
 
 @media (max-width: 768px) {
-  .main-content {
+  .main-content.with-navbar {
     padding-top: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content.with-navbar {
+    padding-top: 56px;
   }
 }
 
@@ -261,4 +282,47 @@ body {
 
 .w-100 { width: 100%; }
 .h-100 { height: 100%; }
+
+/* Utilidades responsive */
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .text-center-mobile {
+    text-align: center !important;
+  }
+  
+  .full-width-mobile {
+    width: 100% !important;
+  }
+}
+
+/* Mejora para inputs en móviles */
+@media (max-width: 480px) {
+  input, select, textarea {
+    font-size: 16px !important; /* Previene zoom en iOS */
+  }
+}
+/* Mejoras responsive globales */
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .text-center-mobile {
+    text-align: center !important;
+  }
+  
+  .full-width-mobile {
+    width: 100% !important;
+  }
+}
+
+/* Prevenir zoom en inputs en iOS */
+@media (max-width: 480px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
 </style>
