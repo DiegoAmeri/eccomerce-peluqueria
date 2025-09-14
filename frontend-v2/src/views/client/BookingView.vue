@@ -452,6 +452,17 @@ export default {
     const showSuccessModal = ref(false);
     const currentWeekStart = ref(new Date());
 
+    // Verificar si hay datos de reserva rápida
+    const quickBookingData = ref(null);
+    
+    if (route.query.quickBooking) {
+      try {
+        quickBookingData.value = JSON.parse(route.query.quickBooking);
+      } catch (e) {
+        console.error('Error parsing quick booking data:', e);
+      }
+    }
+
     // Datos de ejemplo (en una app real vendrían de la API)
     const categories = ref(['Todos', 'Corte', 'Color', 'Tratamientos', 'Barba', 'Uñas']);
     const services = ref([
@@ -518,11 +529,33 @@ export default {
       phone: '+54 11 1234-5678'
     });
 
-    const userInfo = computed(() => store.getters.userData || {
-      name: 'Juan Pérez',
-      email: 'juan@example.com',
-      phone: '+54 11 1234-5678'
+    const userInfo = computed(() => {
+      // Si el usuario está autenticado, usar sus datos
+      if (store.getters.isAuthenticated) {
+        return store.getters.userData || {
+          name: 'Juan Pérez',
+          email: 'juan@example.com',
+          phone: '+54 11 1234-5678'
+        };
+      }
+      // Si no está autenticado pero tiene datos de reserva rápida, usar esos
+      if (quickBookingData.value) {
+        return {
+          name: `${quickBookingData.value.name} ${quickBookingData.value.lastName}`,
+          email: quickBookingData.value.email,
+          phone: quickBookingData.value.phone
+        };
+      }
+      // Si no hay datos, devolver valores vacíos
+      return {
+        name: '',
+        email: '',
+        phone: ''
+      };
     });
+
+    const isAuthenticated = computed(() => store.getters.isAuthenticated);
+    const isQuickBooking = computed(() => !!quickBookingData.value);
 
     const filteredServices = computed(() => {
       if (selectedCategory.value === 'Todos') {
@@ -588,7 +621,8 @@ export default {
       professionalName: selectedProfessional.value?.name,
       date: formattedSelectedDate.value,
       time: selectedSlot.value?.time,
-      salonName: selectedSalon.value?.name
+      salonName: selectedSalon.value?.name,
+      clientInfo: userInfo.value
     }));
 
     const generateTimeSlots = (date) => {
@@ -656,10 +690,29 @@ export default {
       bookingLoading.value = true;
       
       try {
-        // Simular llamada a la API
+        // Simular llamada a la API con todos los datos
+        const bookingData = {
+          salonId: salonId.value,
+          service: selectedService.value,
+          professional: selectedProfessional.value,
+          date: selectedDate.value,
+          time: selectedSlot.value?.time,
+          clientInfo: userInfo.value,
+          notes: bookingNotes.value,
+          isQuickBooking: isQuickBooking.value
+        };
+        
+        console.log('Booking data to send:', bookingData);
+        
         await new Promise(resolve => setTimeout(resolve, 2000));
         
         showSuccessModal.value = true;
+        
+        // Limpiar los query params después de confirmar la reserva
+        if (isQuickBooking.value) {
+          router.replace({ path: router.currentRoute.value.path });
+        }
+        
       } catch (error) {
         console.error('Error confirming booking:', error);
         alert('Error al confirmar la reserva. Por favor, intenta nuevamente.');
@@ -669,16 +722,31 @@ export default {
     };
 
     const goToDashboard = () => {
-      router.push('/dashboard');
+      if (isAuthenticated.value) {
+        router.push('/dashboard');
+      } else {
+        router.push('/');
+      }
     };
 
     const viewAppointment = () => {
-      router.push('/my-appointments');
+      if (isAuthenticated.value) {
+        router.push('/my-appointments');
+      } else {
+        // Para usuarios no autenticados, mostrar información de contacto del salón
+        alert(`Tu reserva ha sido confirmada. Contacta al salón en ${selectedSalon.value.phone} para cualquier consulta.`);
+        router.push('/');
+      }
     };
 
     onMounted(() => {
       // Cargar datos de la peluquería
       salonName.value = selectedSalon.value.name;
+      
+      // Si es una reserva rápida, mostrar mensaje informativo
+      if (isQuickBooking.value) {
+        console.log('Reserva rápida iniciada para:', quickBookingData.value);
+      }
     });
 
     return {
@@ -704,6 +772,9 @@ export default {
       totalPrice,
       bookingConfirmation,
       userInfo,
+      isAuthenticated,
+      isQuickBooking,
+      quickBookingData,
       selectService,
       selectProfessional,
       selectTimeSlot,

@@ -1,12 +1,12 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark" v-if="isAuthenticated">
     <div class="container-fluid">
       <button class="navbar-toggler me-2" type="button" @click="toggleMobileMenu">
         <span class="navbar-toggler-icon"></span>
       </button>
       
       <router-link class="navbar-brand" to="/">
-        <i class="fas fa-cut me-2"></i>StyleCut Pro
+        <i class="fas fa-cut me-2"></i>StyleCuti Pro
       </router-link>
       
       <!-- Desktop Navigation -->
@@ -42,9 +42,12 @@
                 </span>
               </a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#" @click="logout">
-                <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <router-link to="/auth/login" class="dropdown-item" @click="logout">
+                  <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </router-link>
+              </li>
             </ul>
           </li>
           
@@ -293,7 +296,7 @@ export default {
     const logout = () => {
       if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
         store.dispatch('logout');
-        router.push('/login');
+        router.push('/auth/login');
         showUserDropdown.value = false;
       }
     };

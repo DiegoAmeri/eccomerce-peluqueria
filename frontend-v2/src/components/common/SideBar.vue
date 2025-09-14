@@ -4,7 +4,7 @@
     <div class="sidebar-header">
       <div class="sidebar-brand">
         <i class="fas fa-cut"></i>
-        <span class="brand-text" v-if="!isCollapsed">StyleCut Pro</span>
+        <span class="brand-text" v-if="!isCollapsed">StyleCuti Pro</span>
       </div>
       <button class="sidebar-toggle" @click="toggleCollapse">
         <i :class="isCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>

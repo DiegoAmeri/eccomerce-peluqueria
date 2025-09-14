@@ -4,7 +4,6 @@ import { useStore } from 'vuex';
 // Layout Components
 import MainLayout from '@/layouts/MainLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import PublicLayout from '@/layouts/PublicLayout.vue';
 
 // Auth Views
 import LoginView from '@/views/auth/LoginView.vue';
@@ -14,13 +13,13 @@ import ResetPasswordView from '@/views/auth/ResetPasswordView.vue';
 
 // Client Views
 import ClientDashboard from '@/views/client/ClientDashboard.vue';
-import HomeView from '@/views/client/HomeView.vue'
 import SalonListView from '@/views/client/SalonListView.vue';
 import SalonDetailView from '@/views/client/SalonDetailView.vue';
 import MyAppointmentsView from '@/views/client/MyAppointmentsView.vue';
 import FavoritesView from '@/views/client/FavoritesView.vue';
 import ClientProfileView from '@/views/client/ClientProfileView.vue';
 import BookingView from '@/views/client/BookingView.vue';
+import HomeView from '@/views/client/HomeView.vue';
 
 // Barber Views
 import BarberDashboard from '@/views/barber/BarberDashboard.vue';
@@ -45,20 +44,28 @@ import ServerErrorView from '@/views/ServerErrorView.vue';
 const routes = [
   {
     path: '/',
-    component: PublicLayout,
-    meta: { requiresAuth: false },
-    children: [
-      {
-        path: '',
-        name: 'Home',
-        component: HomeView,
-        meta: { title: 'Inicio - StyleCut Pro' }
-      },
-      {
-        path: '/inicio',
-        redirect: '/'
-      }
-    ]
+    name: 'Home',
+    component: HomeView,
+    meta: { requiresAuth: false, hideSidebar: true }
+  },
+
+  {
+    path: '/dashboard',
+    redirect: '/client/dashboard'
+  },
+
+  // Public Routes (no authentication required)
+  {
+    path: '/salons/:id',
+    name: 'PublicSalonDetail',
+    component: SalonDetailView,
+    meta: { requiresAuth: false, hideSidebar: true, title: 'Detalle de Peluquería' }
+  },
+  {
+    path: '/salons/:id/booking',
+    name: 'PublicBooking',
+    component: BookingView,
+    meta: { requiresAuth: false, hideSidebar: true, title: 'Reservar Turno' }
   },
 
   // Auth Routes
@@ -94,7 +101,7 @@ const routes = [
     ]
   },
 
- // Client Routes
+  // Client Routes
   {
     path: '/client',
     component: MainLayout,
@@ -144,7 +151,6 @@ const routes = [
       }
     ]
   },
-
 
   // Barber Routes
   {
@@ -254,6 +260,20 @@ const routes = [
     ]
   },
 
+  // Public Routes (no authentication required) - MUST be after authenticated routes
+  {
+    path: '/salons/:id',
+    name: 'PublicSalonDetail',
+    component: SalonDetailView,
+    meta: { requiresAuth: false, hideSidebar: true, title: 'Detalle de Peluquería' }
+  },
+  {
+    path: '/salons/:id/booking',
+    name: 'PublicBooking',
+    component: BookingView,
+    meta: { requiresAuth: false, hideSidebar: true, title: 'Reservar Turno' }
+  },
+
   // Common Routes
   {
     path: '/not-found',
@@ -292,12 +312,6 @@ router.beforeEach(async (to, from, next) => {
   const store = useStore();
   const isAuthenticated = store.getters.isAuthenticated;
   const userRole = store.getters.userType;
-
-  // Permitir acceso a la página de inicio sin autenticación
-  if (to.path === '/' || to.path === '/inicio') {
-    next();
-    return;
-  }
 
   // Set page title
   if (to.meta.title) {

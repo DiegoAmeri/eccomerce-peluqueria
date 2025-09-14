@@ -2,7 +2,7 @@
   <div class="dashboard">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h3>Dashboard</h3>
-      <button class="btn btn-primary" @click="$router.push('/salons')">
+      <button class="btn btn-primary" @click="$router.push('/client/salons')">
         <i class="fas fa-plus me-1"></i> Reservar Turno
       </button>
     </div>
@@ -41,7 +41,7 @@
             <div v-else-if="appointments.length === 0" class="text-center py-4">
               <i class="fas fa-calendar-times fa-2x text-muted"></i>
               <p class="mt-2">No tienes turnos programados</p>
-              <button class="btn btn-primary mt-2" @click="$router.push('/salons')">
+              <button class="btn btn-primary mt-2" @click="$router.push('/client/salons')">
                 Reservar mi primer turno
               </button>
             </div>

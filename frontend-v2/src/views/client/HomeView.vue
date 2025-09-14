@@ -31,6 +31,7 @@
                 <router-link to="/auth/register" class="btn btn-primary">
                 Registrarse
                 </router-link>
+
             </div>
         </div>
       </div>
@@ -45,7 +46,7 @@
             <p class="lead mb-4">Descubre las mejores peluquerías y barberías cerca de ti. Reserva tu turno en segundos.</p>
             <div class="d-flex flex-wrap gap-2">
               <a href="#salons" class="btn btn-light btn-lg">Ver Peluquerías</a>
-              <router-link to="/register" class="btn btn-outline-light btn-lg">Crear Cuenta</router-link>
+              <router-link to="/auth/register" class="btn btn-outline-light btn-lg">Crear Cuenta</router-link>
             </div>
           </div>
           <div class="col-lg-6 text-center">
@@ -166,7 +167,18 @@
                 </div>
               </div>
               <div class="card-footer bg-white border-0 pt-0">
-                <router-link :to="`/salon/${salon.id}`" class="btn btn-primary w-100">
+                <button 
+                  v-if="!isAuthenticated" 
+                  class="btn btn-primary w-100" 
+                  @click="openQuickBooking(salon)"
+                >
+                  Reservar Turno
+                </button>
+                <router-link 
+                  v-else 
+                  :to="`/salons/${salon.id}`" 
+                  class="btn btn-primary w-100"
+                >
                   Ver Detalles
                 </router-link>
               </div>
@@ -181,7 +193,38 @@
         </div>
       </div>
     </section>
-
+    <!-- Modal de reserva rápida para no autenticados -->
+    <div class="modal fade" id="quickBookingModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Reservar en {{ selectedSalon?.name }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="submitQuickBooking">
+              <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" v-model="quickBooking.name" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Apellido</label>
+                <input type="text" class="form-control" v-model="quickBooking.lastName" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Celular</label>
+                <input type="tel" class="form-control" v-model="quickBooking.phone" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" v-model="quickBooking.email">
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Continuar con la reserva</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Footer -->
     <footer class="bg-dark text-white py-5">
       <div class="container">
@@ -236,18 +279,45 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { Modal } from 'bootstrap';
 
 export default {
   name: 'HomeView',
   setup() {
+    const store = useStore();
+    const router = useRouter();
     const loading = ref(true);
     const searchQuery = ref('');
     const salons = ref([]);
     const currentPage = ref(1);
     const itemsPerPage = ref(6);
     const hasMore = ref(true);
+    
+    // Variables para reserva rápida
+    const isAuthenticated = computed(() => store.getters.isAuthenticated);
+    const quickBookingModal = ref(null);
+    const selectedSalon = ref(null);
+    const quickBooking = ref({
+      name: '',
+      lastName: '',
+      phone: '',
+      email: ''
+    });
 
-    // Datos de ejemplo (en una app real vendrían de una API)
+    // Función para obtener el nombre de categoría legible
+    const getCategoryName = (category) => {
+      const categories = {
+        'peluqueria': 'Peluquería',
+        'barberia': 'Barbería',
+        'estetica': 'Estética',
+        'unas': 'Uñas'
+      };
+      return categories[category] || category;
+    };
+
+    // Datos de ejemplo mejorados
     const sampleSalons = [
       {
         id: 1,
@@ -257,7 +327,7 @@ export default {
         rating: 4.8,
         reviews: 124,
         address: "Av. Siempre Viva 742, Ciudad",
-        category: "Barbería",
+        category: "barberia",
         services: ["Corte de cabello", "Arreglo de barba", "Afeitado clásico", "Tinte", "Mascarillas"]
       },
       {
@@ -268,7 +338,7 @@ export default {
         rating: 4.5,
         reviews: 89,
         address: "Calle Falsa 123, Ciudad",
-        category: "Peluquería",
+        category: "peluqueria",
         services: ["Corte de cabello", "Coloración", "Peinados", "Tratamientos", "Extensiones"]
       },
       {
@@ -279,7 +349,7 @@ export default {
         rating: 4.9,
         reviews: 156,
         address: "Boulevard Central 456, Ciudad",
-        category: "Salón de Belleza",
+        category: "estetica",
         services: ["Corte de cabello", "Manicura", "Pedicura", "Depilación", "Maquillaje", "Masajes"]
       },
       {
@@ -290,7 +360,7 @@ export default {
         rating: 4.7,
         reviews: 78,
         address: "Plaza Central 789, Ciudad",
-        category: "Barbería",
+        category: "barberia",
         services: ["Arreglo de barba", "Afeitado tradicional", "Tratamientos para barba", "Depilación"]
       },
       {
@@ -301,7 +371,7 @@ export default {
         rating: 4.6,
         reviews: 92,
         address: "Av. del Sol 321, Ciudad",
-        category: "Peluquería",
+        category: "peluqueria",
         services: ["Coloración", "Balayage", "Mechas", "Reflejos", "Decoloración"]
       },
       {
@@ -312,7 +382,7 @@ export default {
         rating: 4.9,
         reviews: 203,
         address: "Calle Tradición 654, Ciudad",
-        category: "Barbería Clásica",
+        category: "barberia",
         services: ["Corte clásico", "Afeitado con navaja", "Servicio de hot towels", "Tratamientos vintage"]
       }
     ];
@@ -333,7 +403,7 @@ export default {
         result = result.filter(salon => 
           salon.name.toLowerCase().includes(query) || 
           salon.description.toLowerCase().includes(query) ||
-          salon.category.toLowerCase().includes(query) ||
+          getCategoryName(salon.category).toLowerCase().includes(query) ||
           salon.services.some(service => service.toLowerCase().includes(query))
         );
       }
@@ -350,12 +420,61 @@ export default {
       }
     };
 
+    const openQuickBooking = (salon) => {
+      selectedSalon.value = salon;
+      // Resetear el formulario
+      quickBooking.value = {
+        name: '',
+        lastName: '',
+        phone: '',
+        email: ''
+      };
+      
+      if (!quickBookingModal.value) {
+        quickBookingModal.value = new Modal(document.getElementById('quickBookingModal'));
+      }
+      quickBookingModal.value.show();
+    };
+
+    const submitQuickBooking = () => {
+      // Validar que todos los campos requeridos estén completos
+      if (!quickBooking.value.name || !quickBooking.value.lastName || !quickBooking.value.phone) {
+        alert('Por favor, completa todos los campos requeridos.');
+        return;
+      }
+      
+      // Aquí iría la lógica para procesar la reserva rápida
+      console.log('Reserva rápida:', {
+        salon: selectedSalon.value,
+        client: quickBooking.value
+      });
+      
+      // Redirigir a la página de booking con los datos
+      router.push({
+        path: `/salons/${selectedSalon.value.id}/booking`,
+        query: {
+          quickBooking: JSON.stringify(quickBooking.value)
+        }
+      });
+      
+      // Cerrar modal
+      if (quickBookingModal.value) {
+        quickBookingModal.value.hide();
+      }
+    };
+
     return {
       loading,
       searchQuery,
       filteredSalons,
       loadMore,
-      hasMore
+      hasMore,
+      getCategoryName,
+      isAuthenticated,
+      openQuickBooking,
+      selectedSalon,
+      quickBooking,
+      submitQuickBooking
     };
   }
 };
