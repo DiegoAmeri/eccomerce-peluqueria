@@ -49,25 +49,6 @@ const routes = [
     meta: { requiresAuth: false, hideSidebar: true }
   },
 
-  {
-    path: '/dashboard',
-    redirect: '/client/dashboard'
-  },
-
-  // Public Routes (no authentication required)
-  {
-    path: '/salons/:id',
-    name: 'PublicSalonDetail',
-    component: SalonDetailView,
-    meta: { requiresAuth: false, hideSidebar: true, title: 'Detalle de Peluquería' }
-  },
-  {
-    path: '/salons/:id/booking',
-    name: 'PublicBooking',
-    component: BookingView,
-    meta: { requiresAuth: false, hideSidebar: true, title: 'Reservar Turno' }
-  },
-
   // Auth Routes
   {
     path: '/auth',
@@ -101,12 +82,22 @@ const routes = [
     ]
   },
 
+  // Dashboard redirect
+  {
+    path: '/dashboard',
+    redirect: '/client/dashboard'
+  },
+
   // Client Routes
   {
     path: '/client',
     component: MainLayout,
     meta: { requiresAuth: true, role: 'client' },
     children: [
+      {
+        path: '',
+        redirect: 'dashboard'
+      },
       {
         path: 'dashboard',
         name: 'ClientDashboard',
@@ -159,6 +150,10 @@ const routes = [
     meta: { requiresAuth: true, role: 'barber' },
     children: [
       {
+        path: '',
+        redirect: 'dashboard'
+      },
+      {
         path: 'dashboard',
         name: 'BarberDashboard',
         component: BarberDashboard,
@@ -203,6 +198,10 @@ const routes = [
     component: MainLayout,
     meta: { requiresAuth: true, role: 'owner' },
     children: [
+      {
+        path: '',
+        redirect: 'dashboard'
+      },
       {
         path: 'dashboard',
         name: 'OwnerDashboard',
@@ -260,7 +259,7 @@ const routes = [
     ]
   },
 
-  // Public Routes (no authentication required) - MUST be after authenticated routes
+  // Public Routes (no authentication required)
   {
     path: '/salons/:id',
     name: 'PublicSalonDetail',
@@ -309,29 +308,73 @@ const router = createRouter({
 
 // Navigation Guards
 router.beforeEach(async (to, from, next) => {
-  const store = useStore();
-  const isAuthenticated = store.getters.isAuthenticated;
-  const userRole = store.getters.userType;
+  console.log('🔍 ROUTER DEBUG - Starting navigation guard');
+  console.log('📍 From:', from.path, '-> To:', to.path);
+  console.log('🎯 Route name:', to.name);
+  console.log('🔧 Route meta:', to.meta);
 
-  // Set page title
-  if (to.meta.title) {
-    document.title = `${to.meta.title} - StyleCut Pro`;
-  }
+  try {
+    const store = useStore();
+    
+    // Debug store state
+    console.log('📦 Store state debug:');
+    console.log('- Store exists:', !!store);
+    console.log('- Store getters:', store ? Object.keys(store.getters) : 'No store');
+    
+    let isAuthenticated = false;
+    let userRole = null;
 
-  // Check if route requires authentication
-  if (to.meta.requiresAuth) {
-    if (!isAuthenticated) {
-      // Redirect to login if not authenticated
-      next({
-        name: 'Login',
-        query: { redirect: to.fullPath }
-      });
-      return;
+    try {
+      isAuthenticated = store?.getters?.isAuthenticated || false;
+      userRole = store?.getters?.userType || null;
+    } catch (storeError) {
+      console.error('❌ Error accessing store:', storeError);
+      console.log('🔄 Proceeding without authentication check');
     }
 
-    // Check role-based access
-    if (to.meta.role && to.meta.role !== userRole) {
-      // Redirect to appropriate dashboard based on user role
+    console.log('🔐 Auth state:', { isAuthenticated, userRole });
+
+    // Set page title
+    if (to.meta.title) {
+      document.title = `${to.meta.title} - StyleCut Pro`;
+    }
+
+    // Check if route requires authentication
+    if (to.meta.requiresAuth) {
+      console.log('🚫 Route requires auth');
+      
+      if (!isAuthenticated) {
+        console.log('❌ User not authenticated, redirecting to login');
+        next({
+          name: 'Login',
+          query: { redirect: to.fullPath }
+        });
+        return;
+      }
+
+      // Check role-based access
+      if (to.meta.role && to.meta.role !== userRole) {
+        console.log(`❌ Role mismatch. Required: ${to.meta.role}, User has: ${userRole}`);
+        switch (userRole) {
+          case 'client':
+            next({ name: 'ClientDashboard' });
+            break;
+          case 'barber':
+            next({ name: 'BarberDashboard' });
+            break;
+          case 'owner':
+            next({ name: 'OwnerDashboard' });
+            break;
+          default:
+            next({ name: 'Login' });
+        }
+        return;
+      }
+    }
+
+    // Redirect authenticated users away from auth pages
+    if (to.path.startsWith('/auth') && isAuthenticated) {
+      console.log('🔄 Authenticated user trying to access auth pages, redirecting');
       switch (userRole) {
         case 'client':
           next({ name: 'ClientDashboard' });
@@ -347,35 +390,34 @@ router.beforeEach(async (to, from, next) => {
       }
       return;
     }
-  }
 
-  // Redirect authenticated users away from auth pages
-  if (to.path.startsWith('/auth') && isAuthenticated) {
-    switch (userRole) {
-      case 'client':
-        next({ name: 'ClientDashboard' });
-        break;
-      case 'barber':
-        next({ name: 'BarberDashboard' });
-        break;
-      case 'owner':
-        next({ name: 'OwnerDashboard' });
-        break;
-      default:
-        next({ name: 'Login' });
-    }
-    return;
-  }
+    console.log('✅ Navigation allowed, proceeding to:', to.path);
+    next();
 
-  next();
+  } catch (error) {
+    console.error('💥 Critical error in navigation guard:', error);
+    console.log('🚨 Redirecting to not-found due to error');
+    next('/not-found');
+  }
+});
+
+// Handle navigation errors
+router.onError((error) => {
+  console.error('🚨 Router error:', error);
+  console.error('📋 Error stack:', error.stack);
+  
+  if (error.message.includes('Cannot resolve')) {
+    console.log('🔄 Redirecting to not-found due to resolution error');
+    router.push('/not-found');
+  }
 });
 
 // Global after hook for analytics and logging
 router.afterEach((to, from) => {
-  // Log page view for analytics
-  console.log(`Navigated to: ${to.fullPath}`);
+  console.log('🎉 Successfully navigated to:', to.fullPath);
+  console.log('📊 Final route name:', to.name);
   
-  // Track page view in analytics service (would integrate with Google Analytics, etc.)
+  // Track page view in analytics service
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('config', process.env.VUE_APP_GA_MEASUREMENT_ID, {
       page_path: to.fullPath,

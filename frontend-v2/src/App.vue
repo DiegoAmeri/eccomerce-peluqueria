@@ -60,8 +60,12 @@ export default {
     
     // Determinar si mostrar el sidebar (solo en dashboards autenticados)
     const showSidebar = computed(() => {
-      return store.getters.isAuthenticated && !route.path.startsWith('/auth')
-    })
+      const isAuth = store.getters.isAuthenticated;
+      const isAuthRoute = route.path.startsWith('/auth');
+      const hideSidebar = route.meta.hideSidebar;
+      
+      return isAuth && !isAuthRoute && !hideSidebar;
+    });
     
     // Estado de carga global
     const loading = computed(() => store.state.loading)

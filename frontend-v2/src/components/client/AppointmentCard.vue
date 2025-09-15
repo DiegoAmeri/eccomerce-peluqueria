@@ -73,34 +73,37 @@ export default {
         day: 'numeric'
       });
     };
-    
+
+    const status = computed(() => props.appointment.status);
+
     const canCancel = computed(() => {
       return ['pending', 'confirmed'].includes(props.appointment.status);
     });
-    
+
     const viewDetails = () => {
       emit('view-details', props.appointment.id);
     };
-    
+
     const confirmAppointment = () => {
       emit('confirm', props.appointment.id);
     };
-    
+
     const cancelAppointment = () => {
       emit('cancel', props.appointment.id);
     };
-    
+
     const bookAgain = () => {
       emit('book-again', props.appointment.id);
     };
-    
+
     return {
       formatDate,
       canCancel,
       viewDetails,
       confirmAppointment,
       cancelAppointment,
-      bookAgain
+      bookAgain,
+      status
     };
   }
 };

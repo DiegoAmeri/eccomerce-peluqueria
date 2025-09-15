@@ -99,15 +99,17 @@ export default {
     });
     
     const navigationGroups = computed(() => {
+      const basePath = userType.value ? `/${userType.value}` : '/client';
+      
       const commonItems = [
-        { path: '/dashboard', title: 'Dashboard', icon: 'fas fa-home', badge: null },
-        { path: '/salons', title: 'Peluquerías', icon: 'fas fa-store', badge: null }
+        { path: `${basePath}/dashboard`, title: 'Dashboard', icon: 'fas fa-home', badge: null },
+        { path: `${basePath}/salons`, title: 'Peluquerías', icon: 'fas fa-store', badge: null }
       ];
       
       const clientItems = [
-        { path: '/my-appointments', title: 'Mis Turnos', icon: 'fas fa-calendar', badge: '3' },
-        { path: '/favorites', title: 'Favoritos', icon: 'fas fa-heart', badge: null },
-        { path: '/reviews', title: 'Mis Reseñas', icon: 'fas fa-star', badge: null }
+        { path: '/client/my-appointments', title: 'Mis Turnos', icon: 'fas fa-calendar', badge: '3' },
+        { path: '/client/favorites', title: 'Favoritos', icon: 'fas fa-heart', badge: null },
+        { path: '/client/reviews', title: 'Mis Reseñas', icon: 'fas fa-star', badge: null }
       ];
       
       const barberItems = [
@@ -125,11 +127,6 @@ export default {
       ];
       
       let mainItems = [...commonItems];
-      let secondaryItems = [
-        { path: '/profile', title: 'Mi Perfil', icon: 'fas fa-user', badge: null },
-        { path: '/settings', title: 'Configuración', icon: 'fas fa-cog', badge: null },
-        { path: '/help', title: 'Ayuda & Soporte', icon: 'fas fa-question-circle', badge: null }
-      ];
       
       if (userType.value === 'client') {
         mainItems = [...mainItems, ...clientItems];
@@ -138,6 +135,12 @@ export default {
       } else if (userType.value === 'owner') {
         mainItems = [...mainItems, ...ownerItems];
       }
+      
+      const secondaryItems = [
+        { path: `${basePath}/profile`, title: 'Mi Perfil', icon: 'fas fa-user', badge: null },
+        { path: `${basePath}/settings`, title: 'Configuración', icon: 'fas fa-cog', badge: null },
+        { path: '/help', title: 'Ayuda & Soporte', icon: 'fas fa-question-circle', badge: null }
+      ];
       
       return [
         { title: 'Navegación Principal', items: mainItems },
