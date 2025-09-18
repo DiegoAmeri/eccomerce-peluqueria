@@ -1,91 +1,42 @@
 package com.peluqueria.model;
 
-import java.math.BigDecimal;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import lombok.Data;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "peluquerias")
-@Data
+@Getter
+@Setter
 public class Peluqueria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(nullable = false)
+
+    @NotBlank
+    @Column(unique = true)
     private String nombre;
-    
+
+    @NotBlank
     private String direccion;
-    private String telefono;
-    private String email;
-    private BigDecimal latitud;
-    private BigDecimal longitud;
-    
-    @Column(name = "horario_apertura")
-    private LocalTime horarioApertura;
-    
-    @Column(name = "horario_cierre")
-    private LocalTime horarioCierre;
-    
+
+    @Enumerated(EnumType.STRING)
+    private CategoriaPeluqueria categoria;
+
     private String descripcion;
-    
-    @Column(name = "imagen_url")
-    private String imagenUrl;
-    
-    @Column(name = "calificacion_promedio", precision = 3, scale = 2)
-    private BigDecimal calificacionPromedio = BigDecimal.ZERO;
-    
-    @Column(name = "total_calificaciones")
-    private Integer totalCalificaciones = 0;
-    
-    private Boolean activo = true;
-    
-    @OneToMany(mappedBy = "peluqueria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PeluqueriaServicio> servicios = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "peluqueria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Calificacion> calificaciones = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "peluqueria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PeluqueriaImagen> imagenes = new ArrayList<>();
-    
-    @Column(name = "created_at")
-    private java.time.LocalDateTime createdAt;
-    
-    @Column(name = "updated_at")
-    private java.time.LocalDateTime updatedAt;
-    
-    @PrePersist
-    protected void onCreate() {
-        createdAt = java.time.LocalDateTime.now();
-        updatedAt = java.time.LocalDateTime.now();
-    }
-    
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = java.time.LocalDateTime.now();
-    }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private Peluquero owner;
+    private String instagram;
 
-    @OneToMany(mappedBy = "peluqueria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PeluqueriaPeluquero> empleados = new ArrayList<>();
+    private LocalTime horarioApertura;
+
+    private LocalTime horarioCierre;
+
+    private boolean activa = true;
+
+    @ManyToOne
+    @JoinColumn(name = "propietario_id")
+    private Propietario propietario;
 }

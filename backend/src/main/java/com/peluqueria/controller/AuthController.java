@@ -2,41 +2,35 @@ package com.peluqueria.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.peluqueria.dto.request.JwtResponse;
-import com.peluqueria.dto.request.LoginRequest;
-import com.peluqueria.dto.request.RegistroRequest;
+import com.peluqueria.dto.AuthResponse;
+import com.peluqueria.dto.LoginRequest;
+import com.peluqueria.dto.RegisterRequest;
 import com.peluqueria.service.AuthService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
-    
     @Autowired
-    private AuthService authService;
-    
+    AuthService authService;
+
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.login(loginRequest));
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        AuthResponse authResponse = authService.authenticateUser(loginRequest);
+        return ResponseEntity.ok(authResponse);
     }
-    
-    @PostMapping("/registro")
-    public ResponseEntity<JwtResponse> registro(@RequestBody RegistroRequest registroRequest) {
-        return ResponseEntity.ok(authService.registro(registroRequest));
-    }
-    
-    @PostMapping("/solicitar-union-peluqueria/{peluqueriaId}")
-    public ResponseEntity<Void> solicitarUnionPeluqueria(
-            @PathVariable Long peluqueriaId,
-            @RequestHeader("Authorization") String token) {
-        authService.solicitarUnionPeluqueria(peluqueriaId, token);
-        return ResponseEntity.ok().build();
-    }
-    
-    @GetMapping("/mis-peluquerias")
-    public ResponseEntity<?> obtenerMisPeluquerias(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(authService.obtenerMisPeluquerias(token));
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        AuthResponse authResponse = authService.registerUser(registerRequest);
+        return ResponseEntity.ok(authResponse);
     }
 }

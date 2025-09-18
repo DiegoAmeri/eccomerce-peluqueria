@@ -7,15 +7,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "clientes")
+@Table(name = "propietarios")
 @PrimaryKeyJoinColumn(name = "user_id")
 @Getter
 @Setter
-public class Cliente extends User {
-    // Campos específicos para clientes
-    private boolean notificacionesActivas = true;
+public class Propietario extends User {
+    // Los propietarios pueden tener campos específicos
+    // como información de negocio adicional
     
-    public Cliente() {
+    public Propietario() {
         super();
     }
 }
